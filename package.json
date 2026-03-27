@@ -1,11 +1,16 @@
 {
   "name": "haven-space",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
+    "build": "node scripts/build.js",
+    "start": "npx http-server dist -p 3000 -o",
+    "serve": "npx http-server dist -p 3000",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "http-server": "^14.1.1"
   }
 }

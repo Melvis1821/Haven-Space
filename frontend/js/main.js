@@ -3,16 +3,24 @@ import { initSidebar } from './components/sidebar.js';
 
 // Initialize components
 document.addEventListener('DOMContentLoaded', () => {
-  initLogoCloud();
+  // Only init logo cloud if element exists (homepage only)
+  if (document.getElementById('logoSlider')) {
+    initLogoCloud();
+  }
+  
   initFloatingHeader();
-  initSidebar({
-    role: 'boarder',
-    user: {
-      name: 'Juan Dela Cruz',
-      initials: 'JD',
-      role: 'Boarder',
-    },
-  });
+  
+  // Only init sidebar if container exists (dashboard pages only)
+  if (document.getElementById('sidebar-container')) {
+    initSidebar({
+      role: 'boarder',
+      user: {
+        name: 'Juan Dela Cruz',
+        initials: 'JD',
+        role: 'Boarder',
+      },
+    });
+  }
 });
 
 /**
