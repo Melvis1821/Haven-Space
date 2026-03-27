@@ -17,9 +17,13 @@ const DIST = join(ROOT, 'dist');
 
 // Clean dist folder
 if (existsSync(DIST)) {
-  rmSync(DIST, { recursive: true });
+  try {
+    rmSync(DIST, { recursive: true, force: true });
+  } catch (error) {
+    console.warn(`⚠️  Warning: Could not delete ${DIST}, will attempt to overwrite: ${error.message}`);
+  }
 }
-mkdirSync(DIST);
+mkdirSync(DIST, { recursive: true });
 
 // Copy public views to root of dist
 const publicFiles = [
@@ -56,9 +60,9 @@ const imageFiles = [
   'assets/images/public/login.png',
   'assets/images/public/PrimeRealEstate.png',
   'assets/images/Haven_Space_Logo.png',
+  'assets/images/nvidia.svg',
   'assets/svg/google-icon-logo.svg',
   'assets/svg/apple-dark-logo.svg',
-  'assets/nvidia.svg',
 ];
 
 console.log('Building for production...');
