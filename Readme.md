@@ -2,14 +2,7 @@
 
 A web application that connects boarders with verified boarding houses near their location.
 
-## CI/CD
-
-This project uses GitHub Actions for automated deployments:
-
-- **Pull Requests**: Verifies build succeeds
-- **Main Branch**: Auto-deploys to GitHub Pages
-
-## 🌐 Production URLs
+## Production URLs
 
 After deployment, public pages will be accessible at clean URLs:
 
@@ -18,23 +11,23 @@ After deployment, public pages will be accessible at clean URLs:
 - **Login**: `https://havenspace.com/auth/login.html`
 - **Signup**: `https://havenspace.com/auth/signup.html`
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Build for production
-npm run build
+bun run build
 
 # Serve locally for testing (auto-opens browser)
-npm start
+bun run start
 
 # Or just serve without opening browser
-npm run serve
+bun run serve
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Final/
@@ -47,37 +40,37 @@ Final/
 │   ├── css/
 │   ├── js/
 │   └── assets/
-├── frontend/                # Source files
+├── client/                  # Source files
 │   ├── views/public/        # Public-facing pages
 │   ├── css/
 │   ├── js/
 │   └── assets/
-├── backend/                 # API backend
+├── server/                  # PHP backend
 ├── scripts/
 │   └── build.js             # Production build script
 └── .github/workflows/
     └── github-pages.yml     # Auto-deploy on push
 ```
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Format code
-npm run format
+bun run format
 
 # Check formatting
-npm run format:check
+bun run format:check
 
 # Build production files
-npm run build
+bun run build
 ```
 
-## 📦 Deployment
+## Deployment
 
 The application deploys automatically to **GitHub Pages** when you push to the `main` branch:
 
 1. Code is pushed to `main`
-2. GitHub Actions runs `npm run build`
+2. GitHub Actions runs `bun run build`
 3. The `dist/` folder is deployed to GitHub Pages
 4. Clean URLs are available immediately
 
@@ -85,17 +78,17 @@ The application deploys automatically to **GitHub Pages** when you push to the `
 
 ```bash
 # Build locally
-npm run build
+bun run build
 
 # Preview
-npx http-server dist -p 3000
+bunx http-server dist -p 3000
 
 # Deploy (if using GitHub Pages CLI)
 # Or simply push to main branch
 git push origin main
 ```
 
-## 🎨 Technology Stack
+## Technology Stack
 
 | Category       | Technology                             |
 | -------------- | -------------------------------------- |
@@ -105,7 +98,7 @@ git push origin main
 | **Build**      | Custom Node.js build script            |
 | **Deployment** | GitHub Pages with GitHub Actions       |
 
-## 📝 Key Features
+## Key Features
 
 - **Clean URLs**: Production build flattens folder structure for simple URLs
 - **Responsive Design**: Mobile-first approach
@@ -113,11 +106,11 @@ git push origin main
 - **Dual Roles**: Support for both landlords and boarders
 - **Dashboard Views**: Separate dashboards for each user type
 
-## 🔗 Links
+## Links
 
 - [Contributing Guidelines](.github/CONTRIBUTING.md)
 - [Pull Request Template](.github/pull_request_template.md)
 
-## 📄 License
+## License
 
 MIT
