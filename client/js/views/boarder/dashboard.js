@@ -14,6 +14,8 @@ const dashboardState = {
   payments: [],
   savedSearches: [],
   documents: [],
+  // Track user's contract status
+  contractStatus: 'application', // 'application' | 'contract' | 'active-lease'
 };
 
 /**
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeSavedSearches();
   initializeDocumentVault();
   initializeApplicationTracker();
+  initializeDynamicCards();
 });
 
 /**
@@ -351,6 +354,152 @@ function updateDashboardUI() {
   console.log(`${upcomingPayments} upcoming payments`);
 }
 
+/**
+ * Initialize dynamic cards that change based on user's contract status
+ */
+function initializeDynamicCards() {
+  updateDynamicCards();
+}
+
+/**
+ * Update dynamic cards based on user's contract/application phase
+ * Cards switch content automatically when user signs contract
+ */
+function updateDynamicCards() {
+  const maintenanceCard = document.querySelector('[data-dynamic-card="maintenance"]');
+  const leaseCard = document.querySelector('[data-dynamic-card="lease"]');
+
+  if (!maintenanceCard || !leaseCard) return;
+
+  const isPostContract =
+    dashboardState.contractStatus === 'contract' ||
+    dashboardState.contractStatus === 'active-lease';
+
+  if (isPostContract) {
+    // Switch to Maintenance Status and Lease Timeline
+    updateMaintenanceCard(maintenanceCard);
+    updateLeaseCard(leaseCard);
+  } else {
+    // Show Application Progress and Lease Start info
+    updateApplicationProgressCard(maintenanceCard);
+    updateLeaseTimelineCard(leaseCard);
+  }
+}
+
+/**
+ * Update card to show Maintenance Status (post-contract)
+ */
+function updateMaintenanceCard(card) {
+  const label = card.querySelector('.boarder-stat-label');
+  const value = card.querySelector('.boarder-stat-value');
+  const description = card.querySelector('.boarder-stat-description');
+  const icon = card.querySelector('.boarder-stat-icon');
+
+  if (label) label.textContent = 'Maintenance Status';
+  if (icon) {
+    icon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    `;
+  }
+  if (value) value.textContent = 'No Issues';
+  if (description) {
+    description.innerHTML = `
+      <span class="status-dot status-dot-success"></span>
+      All systems functional
+    `;
+  }
+}
+
+/**
+ * Update card to show Lease Timeline (post-contract)
+ */
+function updateLeaseCard(card) {
+  const label = card.querySelector('.boarder-stat-label');
+  const value = card.querySelector('.boarder-stat-value');
+  const description = card.querySelector('.boarder-stat-description');
+  const icon = card.querySelector('.boarder-stat-icon');
+
+  if (label) label.textContent = 'Lease Timeline';
+  if (icon) {
+    icon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    `;
+  }
+  if (value) value.textContent = '11 months';
+  if (description) {
+    description.innerHTML = `
+      <span class="status-dot status-dot-info"></span>
+      Ends: Jan 15, 2026
+    `;
+  }
+}
+
+/**
+ * Update card to show Application Progress (pre-contract)
+ */
+function updateApplicationProgressCard(card) {
+  const label = card.querySelector('.boarder-stat-label');
+  const value = card.querySelector('.boarder-stat-value');
+  const description = card.querySelector('.boarder-stat-description');
+  const icon = card.querySelector('.boarder-stat-icon');
+
+  if (label) label.textContent = 'Application Progress';
+  if (icon) {
+    icon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    `;
+  }
+  if (value) value.textContent = '2/4 Steps';
+  if (description) {
+    description.innerHTML = `
+      <span class="status-dot status-dot-success"></span>
+      1 approved, 1 pending review
+    `;
+  }
+}
+
+/**
+ * Update card to show Lease Start Timeline (pre-contract)
+ */
+function updateLeaseTimelineCard(card) {
+  const label = card.querySelector('.boarder-stat-label');
+  const value = card.querySelector('.boarder-stat-value');
+  const description = card.querySelector('.boarder-stat-description');
+  const icon = card.querySelector('.boarder-stat-icon');
+
+  if (label) label.textContent = 'Lease Timeline';
+  if (icon) {
+    icon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    `;
+  }
+  if (value) value.textContent = 'Starting Soon';
+  if (description) {
+    description.innerHTML = `
+      <span class="status-dot status-dot-info"></span>
+      Expected: Feb 1, 2025
+    `;
+  }
+}
+
+/**
+ * Set user's contract status and update cards
+ * @param {string} status - 'application' | 'contract' | 'active-lease'
+ */
+function setContractStatus(status) {
+  dashboardState.contractStatus = status;
+  updateDynamicCards();
+}
+
 // Add animation keyframes for notifications
 const style = document.createElement('style');
 style.textContent = `
@@ -364,7 +513,7 @@ style.textContent = `
       opacity: 1;
     }
   }
-  
+
   @keyframes slideOut {
     from {
       transform: translateX(0);
@@ -375,13 +524,13 @@ style.textContent = `
       opacity: 0;
     }
   }
-  
+
   .boarder-notification-content {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  
+
   .boarder-notification-content svg {
     width: 20px;
     height: 20px;
@@ -390,4 +539,13 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Export functions for external use
-export { dashboardState, loadDashboardData, showNotification, getUserLocation, handleSearch };
+export {
+  dashboardState,
+  loadDashboardData,
+  showNotification,
+  getUserLocation,
+  handleSearch,
+  initializeDynamicCards,
+  updateDynamicCards,
+  setContractStatus,
+};

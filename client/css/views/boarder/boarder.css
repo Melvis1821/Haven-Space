@@ -446,6 +446,10 @@
   background-color: var(--dashboard-red);
 }
 
+.status-dot-info {
+  background-color: var(--dashboard-info);
+}
+
 /* ===== Status Badges ===== */
 .boarder-status-badge {
   display: inline-block;
