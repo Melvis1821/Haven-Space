@@ -1,6 +1,4 @@
 @import './components/logo-cloud.css';
-@import './components/sidebar.css';
-@import './components/navbar.css';
 @import './views/public/auth.css';
 @import './views/boarder/boarder.css';
 
