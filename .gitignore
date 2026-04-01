@@ -6,4 +6,6 @@ build/
 .DS_Store
 .env
 .idea/
-.vscode/.worktrees/  
+.vscode/.worktrees/
+.husky/
+.worktrees/  

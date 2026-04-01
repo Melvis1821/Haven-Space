@@ -24,12 +24,12 @@
 }
 
 /* Scrolled state - floating pill */
-.navbar.scrolled {
+.navbar.navbar-scrolled {
   padding: 0;
 }
 
-.navbar.scrolled .nav-container {
-  max-width: 64rem; /* max-w-5xl equivalent */
+.navbar.navbar-scrolled .nav-container {
+  max-width: 64rem;
   margin: 1rem auto;
   border-radius: 50px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -101,7 +101,7 @@
 }
 
 .btn-join:hover {
-  background: var(--primary-green);
+  background: var(--dark-green);
 }
 
 /* Hero Section */

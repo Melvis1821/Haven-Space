@@ -110,6 +110,12 @@ const jsFiles = [
   'js/components/navbar.js',
   'js/components/sidebar.js',
   'js/shared/state.js',
+  'js/shared/icons.js',
+  // Entry point files (index.js for each role)
+  'js/views/public/index.js',
+  'js/views/admin/index.js',
+  'js/views/boarder/index.js',
+  'js/views/landlord/index.js',
   // Landing
   'js/views/landing/landing.js',
   // Admin
@@ -194,10 +200,10 @@ function fixPaths(htmlContent, depth) {
 // Copy public HTML files to root with path fixes
 publicFiles.forEach(file => {
   // Extract path parts to determine destination
+  // File format: 'views/<role>/<subfolder>/file.html' or 'views/<role>/file.html'
   const parts = file.split('/'); // e.g., ['views', 'boarder', 'applications', 'index.html']
   const fileName = parts.pop(); // 'index.html'
-  const subfolder = parts.pop(); // e.g., 'applications', 'auth', 'maps'
-  const parentFolder = parts.pop(); // e.g., 'boarder', 'landlord', 'public'
+  const lastFolder = parts.pop(); // e.g., 'applications' or 'boarder' (if no subfolder)
 
   const srcPath = join(SRC, file);
 
@@ -205,45 +211,73 @@ publicFiles.forEach(file => {
   let destPath;
   let depth = 0;
 
-  // Build the destination path based on parent and subfolder
-  if (parentFolder === 'public') {
-    if (subfolder === 'auth') {
-      // Keep auth files in auth/ subfolder
-      destPath = join(DIST, 'auth', fileName);
-      depth = 1;
-    } else {
-      // Put other public files at root
+  // Check if lastFolder is a role folder (dashboard index) or a subfolder
+  // For files like 'views/boarder/index.html', lastFolder = 'boarder' (role folder)
+  // For files like 'views/boarder/applications/index.html', lastFolder = 'applications' (subfolder)
+  const roleFolders = ['admin', 'boarder', 'landlord', 'public'];
+  const isRoleFolder = roleFolders.includes(lastFolder);
+
+  if (isRoleFolder) {
+    // Dashboard index file (e.g., views/boarder/index.html)
+    const role = lastFolder;
+
+    if (role === 'public') {
+      // Public pages go to root
       destPath = join(DIST, fileName);
       depth = 0;
-    }
-  } else if (parentFolder === 'admin') {
-    // Keep admin files in admin/ subfolder
-    destPath = join(DIST, 'admin', fileName);
-    depth = 1;
-  } else if (parentFolder === 'boarder') {
-    if (subfolder === 'maps') {
-      // Keep boarder maps files in boarder/maps/ subfolder
-      destPath = join(DIST, 'boarder', 'maps', fileName);
-      depth = 2;
-    } else {
-      // Keep other boarder files in boarder/ subfolder
-      destPath = join(DIST, 'boarder', subfolder, fileName);
-      depth = 2;
-    }
-  } else if (parentFolder === 'landlord') {
-    if (subfolder === 'maps') {
-      // Keep landlord maps files in landlord/maps/ subfolder
-      destPath = join(DIST, 'landlord', 'maps', fileName);
-      depth = 2;
-    } else {
-      // Keep other landlord files in landlord/ subfolder
-      destPath = join(DIST, 'landlord', subfolder, fileName);
-      depth = 2;
+    } else if (role === 'admin') {
+      // Admin dashboard goes to admin/index.html
+      destPath = join(DIST, 'admin', fileName);
+      depth = 1;
+    } else if (role === 'boarder') {
+      // Boarder dashboard goes to boarder/index.html
+      destPath = join(DIST, 'boarder', fileName);
+      depth = 1;
+    } else if (role === 'landlord') {
+      // Landlord dashboard goes to landlord/index.html
+      destPath = join(DIST, 'landlord', fileName);
+      depth = 1;
     }
   } else {
-    // Fallback: put at root
-    destPath = join(DIST, fileName);
-    depth = 0;
+    // Subfolder file (e.g., views/boarder/applications/index.html)
+    // Need to get the role from the remaining parts
+    const role = parts.pop(); // e.g., 'boarder', 'landlord', 'public'
+
+    if (role === 'public') {
+      if (lastFolder === 'auth') {
+        // Auth files go to auth/ subfolder
+        destPath = join(DIST, 'auth', fileName);
+        depth = 1;
+      } else {
+        // Other public files go to root
+        destPath = join(DIST, fileName);
+        depth = 0;
+      }
+    } else if (role === 'admin') {
+      // Admin subfolder files go to admin/<subfolder>/index.html
+      destPath = join(DIST, 'admin', lastFolder, fileName);
+      depth = 2;
+    } else if (role === 'boarder') {
+      if (lastFolder === 'maps') {
+        // Boarder maps files go to boarder/maps/ subfolder
+        destPath = join(DIST, 'boarder', 'maps', fileName);
+        depth = 2;
+      } else {
+        // Other boarder files go to boarder/<subfolder>/index.html
+        destPath = join(DIST, 'boarder', lastFolder, fileName);
+        depth = 2;
+      }
+    } else if (role === 'landlord') {
+      if (lastFolder === 'maps') {
+        // Landlord maps files go to landlord/maps/ subfolder
+        destPath = join(DIST, 'landlord', 'maps', fileName);
+        depth = 2;
+      } else {
+        // Other landlord files go to landlord/<subfolder>/index.html
+        destPath = join(DIST, 'landlord', lastFolder, fileName);
+        depth = 2;
+      }
+    }
   }
 
   if (!existsSync(srcPath)) {
@@ -260,20 +294,17 @@ publicFiles.forEach(file => {
   writeFileSync(destPath, content);
 
   // Determine relative path for console output
-  const relativePath =
-    parentFolder === 'public' && subfolder === 'auth'
+  const relativePath = isRoleFolder
+    ? lastFolder === 'public'
+      ? ''
+      : `${lastFolder}/`
+    : roleFolders.includes(parts[parts.length - 1])
+    ? parts[parts.length - 1] === 'public' && lastFolder === 'auth'
       ? 'auth/'
-      : parentFolder === 'admin'
-      ? 'admin/'
-      : parentFolder === 'boarder' && subfolder === 'maps'
-      ? 'boarder/maps/'
-      : parentFolder === 'boarder'
-      ? `boarder/${subfolder}/`
-      : parentFolder === 'landlord' && subfolder === 'maps'
-      ? 'landlord/maps/'
-      : parentFolder === 'landlord'
-      ? `landlord/${subfolder}/`
-      : '';
+      : parts[parts.length - 1] === 'public'
+      ? ''
+      : `${parts[parts.length - 1]}/`
+    : '';
   console.log(`✓ Processed ${file} → ${relativePath}${fileName}`);
 });
 

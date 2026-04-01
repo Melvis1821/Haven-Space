@@ -171,33 +171,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+/**
+ * Main Entry Point - View Router
+ *
+ * Detects current view and initializes appropriate components
+ * Uses data attributes on body to detect view type
+ */
+
+import { initPublicViews } from './views/public/index.js';
+import { initBoarderDashboard } from './views/boarder/index.js';
+import { initLandlordDashboardEntry } from './views/landlord/index.js';
+import { initAdminDashboard } from './views/admin/index.js';
 
 /**
- * Floating Header - Scroll-triggered transition
- * Transitions header from full-width to floating pill on scroll
+ * Detect current view and initialize appropriate components
+ * Uses data attribute on body to detect view type
  */
-function initFloatingHeader() {
-  const navbar = document.querySelector('.navbar');
-  const scrollThreshold = 50; // px to trigger floating state
+function detectAndInitialize() {
+  const body = document.body;
+  const view = body.dataset.view || 'public';
+  const dashboardType = body.dataset.dashboardType;
 
-  if (!navbar) return;
+  console.log('Main: Detected view:', view, 'Dashboard type:', dashboardType);
 
-  const handleScroll = () => {
-    if (window.scrollY > scrollThreshold) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  };
+  switch (view) {
+    case 'public':
+      initPublicViews();
+      break;
+    case 'boarder':
+      initBoarderDashboard();
+      break;
+    case 'landlord':
+      initLandlordDashboardEntry();
+      break;
+    case 'admin':
+      initAdminDashboard();
+      break;
+    default:
+      console.warn('Main: Unknown view type:', view);
+      initPublicViews();
+  }
+}
 
-  // Add scroll listener
-  window.addEventListener('scroll', handleScroll, { passive: true });
+// Initialize on DOM ready
+function initialize() {
+  console.log('Main: DOMContentLoaded');
+  detectAndInitialize();
+}
 
-  // Initial check in case page loads mid-scroll
-  handleScroll();
-
-  // Cleanup function (for SPA navigation or component unmounting)
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-  };
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  // DOM already loaded, initialize immediately
+  initialize();
 }
