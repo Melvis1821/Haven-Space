@@ -174,8 +174,8 @@ export function initSidebar(options = {}) {
       renderNavigation(role);
       updateUserInfo(user);
       setActiveState();
-      setupLogoutHandler();
       setupToggleHandler();
+      setupLogoutHandler();
       restoreCollapsedState();
     })
     .catch(err => {
@@ -378,11 +378,11 @@ function setupLogoutHandler() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', e => {
       e.preventDefault();
-      
+
       // Clear authentication data
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
+
       const basePath = resolveBasePath();
       window.location.href = `${basePath}/views/public/auth/login.html`;
     });

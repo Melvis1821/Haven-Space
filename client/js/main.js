@@ -11,10 +11,13 @@ import CONFIG from './config.js';
 function redirectToLogin() {
   const path = window.location.pathname;
   let loginPath = '';
-  
+
   if (path.includes('/views/public/auth/')) {
     loginPath = 'login.html';
-  } else if (path.includes('/views/boarder/index.html') || path.includes('/views/landlord/index.html')) {
+  } else if (
+    path.includes('/views/boarder/index.html') ||
+    path.includes('/views/landlord/index.html')
+  ) {
     loginPath = '../public/auth/login.html';
   } else if (path.includes('/views/boarder/') || path.includes('/views/landlord/')) {
     // For subfolders like boarder/applications/
@@ -23,7 +26,7 @@ function redirectToLogin() {
     // Default fallback
     loginPath = 'views/public/auth/login.html';
   }
-  
+
   window.location.href = loginPath;
 }
 
@@ -57,8 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await fetch(`${CONFIG.API_BASE_URL}/auth/me.php`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
@@ -67,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const result = await response.json();
       // Use the user data from the token payload (or the user object returned by me.php)
-      user = result.user; 
+      user = result.user;
       localStorage.setItem('user', JSON.stringify(user));
 
       // Role-based Access Control
@@ -80,7 +83,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.warn('User is not a boarder. Redirecting to landlord dashboard...');
         window.location.href = '../../landlord/index.html';
         return;
-      }    } catch (error) {
+      }
+    } catch (error) {
       console.error('Auth verification failed:', error);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -91,15 +95,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Only init sidebar if container exists (dashboard pages only)
   if (document.getElementById('sidebar-container')) {
-    const userData = user ? {
-      name: user.first_name ? `${user.first_name} ${user.last_name}` : user.email,
-      initials: user.first_name ? `${user.first_name[0]}${user.last_name[0]}` : user.email[0].toUpperCase(),
-      role: user.role ? (user.role.charAt(0).toUpperCase() + user.role.slice(1)) : 'User',
-    } : {
-      name: 'Guest',
-      initials: 'G',
-      role: 'Guest',
-    };
+    const userData = user
+      ? {
+          name: user.first_name ? `${user.first_name} ${user.last_name}` : user.email,
+          initials: user.first_name
+            ? `${user.first_name[0]}${user.last_name[0]}`
+            : user.email[0].toUpperCase(),
+          role: user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User',
+        }
+      : {
+          name: 'Guest',
+          initials: 'G',
+          role: 'Guest',
+        };
 
     if (isLandlordDashboard) {
       initSidebar({
@@ -130,15 +138,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Only init navbar if container exists (dashboard pages only)
   if (document.getElementById('navbar-container')) {
-    const userData = user ? {
-      name: user.first_name ? `${user.first_name} ${user.last_name}` : user.email,
-      initials: user.first_name ? `${user.first_name[0]}${user.last_name[0]}` : user.email[0].toUpperCase(),
-      avatarUrl: '', // Will use default sample.png
-    } : {
-      name: 'Guest',
-      initials: 'G',
-      avatarUrl: '',
-    };
+    const userData = user
+      ? {
+          name: user.first_name ? `${user.first_name} ${user.last_name}` : user.email,
+          initials: user.first_name
+            ? `${user.first_name[0]}${user.last_name[0]}`
+            : user.email[0].toUpperCase(),
+          avatarUrl: '', // Will use default sample.png
+        }
+      : {
+          name: 'Guest',
+          initials: 'G',
+          avatarUrl: '',
+        };
 
     initNavbar({
       user: userData,

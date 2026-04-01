@@ -6,4 +6,4 @@ build/
 .DS_Store
 .env
 .idea/
-.vscode/
+.vscode/.worktrees/  

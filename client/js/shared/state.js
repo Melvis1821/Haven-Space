@@ -46,13 +46,13 @@ export function loadState() {
   try {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    
+
     if (token && user) {
       currentState = {
         ...initialState,
         isAuthenticated: true,
         user: JSON.parse(user),
-        token: token
+        token: token,
       };
     } else {
       currentState = { ...initialState };
